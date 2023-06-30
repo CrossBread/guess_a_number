@@ -17,6 +17,7 @@ This version will have a visual representation of how much they have narrowed th
 
 The actual implementaion should be as rapid as possible, not involving scalable architecture.  The end goal is to have the game hosted on a public GitHub repo page.  First we'll need basic project setup.  A scaffold for visualizing changes. Then implement the game rules in a manager class.  Test and then publish and share.
 
+## Dev
 - [x] Create a new Flutter project
 - [x] Share to public GitHub repository
 - [ ] Scaffold
@@ -30,6 +31,7 @@ The actual implementaion should be as rapid as possible, not involving scalable 
 - [ ] About page
 - [ ] GitHub Pages Action
 
+## Publish
 - [ ] Publish to GitHub Pages
 - [ ] Publish to Game Jolt
 - [ ] Publish to itch.io
@@ -45,6 +47,7 @@ The actual implementaion should be as rapid as possible, not involving scalable 
 - [ ] Publish to Humble Store
 - [ ] Publish to Discord Store
 
+## Share
 - [ ] Share on Facebook
 - [ ] Share on Twitter
 - [ ] Share on Instagram

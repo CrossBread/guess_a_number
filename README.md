@@ -20,7 +20,7 @@ The actual implementaion should be as rapid as possible, not involving scalable 
 ## Dev
 - [x] Create a new Flutter project
 - [x] Share to public GitHub repository
-- [ ] Scaffold
+- [x] Scaffold
 - [ ] Test Game Rules Class
 - [ ] Game Rules Implementation
 - [ ] Wire up to Scaffold with Text

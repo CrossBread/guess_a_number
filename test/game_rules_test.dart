@@ -93,7 +93,22 @@ main() {
         expect(manager.isPlayerWinner, isFalse);
         expect(manager.isAiWinner, isTrue);
       });
-      test('7. Player Guesses return corresponding high or low indicator', () => throw UnimplementedError());
+      test('7. Player Guesses return corresponding high or low indicator', () {
+        GameManager manager = GameManager(initialGameState: GameState.empty);
+        manager.newGame();
+
+        manager.submitPlayerGuess(manager.answer - 1);
+        expect(manager.isPlayerGuessHigh, isFalse);
+        expect(manager.isPlayerGuessLow, isTrue);
+
+        manager.submitPlayerGuess(manager.answer + 1);
+        expect(manager.isPlayerGuessHigh, isTrue);
+        expect(manager.isPlayerGuessLow, isFalse);
+
+        manager.submitPlayerGuess(manager.answer);
+        expect(manager.isPlayerGuessHigh, isFalse);
+        expect(manager.isPlayerGuessLow, isFalse);
+      });
     });
 
     // Verify that the AI is behaving as expected, the behavior is not defined in the rules, but it should

@@ -61,7 +61,16 @@ main() {
 
       // manager.submitAiGuess(1);
       // manager.submitAiGuess(1000000);
-      test('4. Game is over and player wins if they guess the answer', () => throw UnimplementedError());
+      test('4. Game is over and player wins if they guess the answer', () {
+        GameManager manager = GameManager(initialGameState: GameState.empty);
+        manager.newGame();
+
+        manager.submitPlayerGuess(manager.answer);
+        manager.submitAiGuess(manager.answer);
+        expect(manager.triesCount, equals(1));
+        expect(manager.isGameOver, isTrue);
+        expect(manager.isPlayerWinner, isTrue);
+      });
       test('5. Game is over and player loses if the try limit is reached', () => throw UnimplementedError());
       test('6. Game is over and player loses if the AI guesses the answer', () => throw UnimplementedError());
       test('7. Player Guesses return corresponding high or low indicator', () => throw UnimplementedError());

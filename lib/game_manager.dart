@@ -11,6 +11,12 @@ class GameManager {
 
   get triesCount => _gameState.triesCount;
 
+  get isGameOver => isPlayerWinner || isAiWinner || isOutOfTries;
+
+  get isPlayerWinner => _gameState.playerGuess == _gameState.answer;
+  get isAiWinner => _gameState.aiGuess == _gameState.answer;
+  get isOutOfTries => _gameState.triesCount >= GameState.triesMax;
+
   void newGame() {
     _gameState = GameState.empty.copyWith(
       answer: Random().nextInt(GameState.answerMax) + GameState.answerMin,

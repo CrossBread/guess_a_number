@@ -3,9 +3,13 @@ import 'dart:math';
 import 'package:guess_a_number/game_state.dart';
 
 class GameManager {
-  GameState _gameState;
+  late final Random _rng;
+  late GameState _gameState;
 
-  GameManager({required GameState initialGameState}) : _gameState = initialGameState;
+  GameManager({required GameState initialGameState, int? randomSeed}) {
+    _rng = Random(randomSeed);
+    _gameState = initialGameState;
+  }
 
   get answer => _gameState.answer;
 
@@ -14,16 +18,25 @@ class GameManager {
   get isGameOver => isPlayerWinner || isAiWinner || isOutOfTries;
 
   get isPlayerWinner => _gameState.playerGuess == _gameState.answer;
+
   get isAiWinner => _gameState.aiGuess == _gameState.answer;
+
   get isOutOfTries => _gameState.triesCount >= GameState.triesMax;
 
   get isPlayerGuessHigh => _gameState.playerGuess > _gameState.answer;
 
   get isPlayerGuessLow => _gameState.playerGuess < _gameState.answer;
 
+  get lastAiGuess => _gameState.aiGuess;
+
+  get aiGuessMax => _gameState.aiGuessMax;
+
+  get aiGuessMin => _gameState.aiGuessMin;
+
   void newGame() {
+    var randInt = _rng.nextInt(GameState.answerMax);
     _gameState = GameState.empty.copyWith(
-      answer: Random().nextInt(GameState.answerMax) + GameState.answerMin,
+      answer: randInt + GameState.answerMin,
     );
   }
 
@@ -40,16 +53,27 @@ class GameManager {
     );
   }
 
-  submitAiGuess(int i) {
-    if (i < GameState.answerMin || i > GameState.answerMax) {
-      throw RangeError.range(i, GameState.answerMin, GameState.answerMax);
+  void submitAiGuess(int guess) {
+    if (guess < GameState.answerMin || guess > GameState.answerMax) {
+      throw RangeError.range(guess, GameState.answerMin, GameState.answerMax);
     }
+
     _gameState = _gameState.copyWith(
-      aiGuess: i,
+      aiGuess: guess,
       aiGuessCount: _gameState.aiGuessCount + 1,
-      // TODO: Set the following so they help the AI close in on the answer.
-      aiGuessMax: max(_gameState.aiGuessMax, i),
-      aiGuessMin: min(_gameState.aiGuessMin, i),
+      aiGuessMax: _gameState.answer <= guess ? guess : _gameState.aiGuessMax,
+      aiGuessMin: _gameState.answer >= guess ? guess : _gameState.aiGuessMin,
     );
+  }
+
+  int generateAiGuess() {
+    // Allow a deviation of up to +/- 10% of the answer space size, bounded by actual answer space
+    var answerSpaceSize = _gameState.aiGuessMax - _gameState.aiGuessMin;
+    var modifier = -.1 + 0.2 * _rng.nextDouble(); // (-10%, 10%)
+    var deviation = (answerSpaceSize * modifier).round();
+    var guess = ((answerSpaceSize) / 2 + _gameState.aiGuessMin + deviation)
+        .round()
+        .clamp(_gameState.aiGuessMin, _gameState.aiGuessMax);
+    return guess;
   }
 }

@@ -47,7 +47,7 @@ class GameState {
     triesCount: 0,
     aiGuess: 0,
     aiGuessCount: 0,
-    aiGuessMax: 0,
-    aiGuessMin: 0,
+    aiGuessMax: answerMax,
+    aiGuessMin: answerMin,
   );
 }

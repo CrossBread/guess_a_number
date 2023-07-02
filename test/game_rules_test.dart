@@ -114,9 +114,49 @@ main() {
     // Verify that the AI is behaving as expected, the behavior is not defined in the rules, but it should
     // be "intelligent" in the context of the rules
     group('AI Behavior', () {
-      test('AI Guess is always within limits', () => throw UnimplementedError());
-      test('AI Guess is always between last guess and the answer', () => throw UnimplementedError());
-      test('AI Guess is not deterministic', () => throw UnimplementedError());
+      var manager = GameManager(initialGameState: GameState.empty);
+      setUp(() {
+        manager = GameManager(initialGameState: GameState.empty, randomSeed: 123);
+        manager.newGame();
+      });
+
+      test('AI Guess is always within max and min answer limits', () {
+        for (int i = 0; i < 1000; i++) {
+          int aiGuess = manager.generateAiGuess();
+          expect(GameState.answerMax, greaterThanOrEqualTo(aiGuess));
+          expect(GameState.answerMin, lessThanOrEqualTo(aiGuess));
+        }
+      });
+      test('AI Guess is always between max and min ai guess', () {
+        for (int i = 0; i < 1000; i++) {
+          int aiGuess = manager.generateAiGuess();
+          expect(manager.aiGuessMax, greaterThanOrEqualTo(aiGuess));
+          expect(manager.aiGuessMin, lessThanOrEqualTo(aiGuess));
+        }
+      });
+      test('AI Guesses converge on the answer', () {
+        print('Test, answer: ${manager.answer}');
+        int lastDistanceToAnswer = GameState.answerMax;
+        for (int i = 0; i < 50; i++) {
+          int aiGuess = manager.generateAiGuess();
+          manager.submitAiGuess(aiGuess);
+          if (aiGuess == manager.answer) {
+            break;
+          }
+          int distanceToAnswer = (manager.answer - aiGuess).abs();
+          expect(distanceToAnswer, lessThan(lastDistanceToAnswer));
+        }
+        expect(manager.isAiWinner, isTrue);
+        expect(manager.isGameOver, isTrue);
+      });
+      test('AI Guess is not deterministic', () {
+        int lastAiGuess = manager.generateAiGuess();
+        for (int i = 0; i < 1000; i++) {
+          int aiGuess = manager.generateAiGuess();
+          expect(aiGuess, isNot(equals(lastAiGuess)));
+          lastAiGuess = aiGuess;
+        }
+      });
     });
 
     // Test conditions that should never occur and would represent a bug in the code

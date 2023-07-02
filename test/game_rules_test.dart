@@ -71,7 +71,18 @@ main() {
         expect(manager.isGameOver, isTrue);
         expect(manager.isPlayerWinner, isTrue);
       });
-      test('5. Game is over and player loses if the try limit is reached', () => throw UnimplementedError());
+      test('5. Game is over and player loses if the try limit is reached', () {
+        GameManager manager =
+            GameManager(initialGameState: GameState.empty.copyWith(answer: GameState.answerMax));
+
+        for (int i = 0; i < GameState.triesMax; i++) {
+          manager.submitPlayerGuess(GameState.answerMin);
+          manager.submitAiGuess(GameState.answerMin);
+        }
+        expect(manager.triesCount, equals(GameState.triesMax));
+        expect(manager.isGameOver, isTrue);
+        expect(manager.isPlayerWinner, isFalse);
+      });
       test('6. Game is over and player loses if the AI guesses the answer', () => throw UnimplementedError());
       test('7. Player Guesses return corresponding high or low indicator', () => throw UnimplementedError());
     });

@@ -83,7 +83,16 @@ main() {
         expect(manager.isGameOver, isTrue);
         expect(manager.isPlayerWinner, isFalse);
       });
-      test('6. Game is over and player loses if the AI guesses the answer', () => throw UnimplementedError());
+      test('6. Game is over and player loses if the AI guesses the answer', () {
+        GameManager manager = GameManager(initialGameState: GameState.empty.copyWith(answer: 123));
+
+        manager.submitPlayerGuess(1);
+        manager.submitAiGuess(manager.answer);
+        expect(manager.triesCount, equals(1));
+        expect(manager.isGameOver, isTrue);
+        expect(manager.isPlayerWinner, isFalse);
+        expect(manager.isAiWinner, isTrue);
+      });
       test('7. Player Guesses return corresponding high or low indicator', () => throw UnimplementedError());
     });
 

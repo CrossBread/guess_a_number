@@ -1,9 +1,9 @@
 class GameState {
-  static const int answerMax = 1;
-  static const int answerMin = 1000000;
+  static const int answerMin = 1;
+  static const int answerMax = 1000000;
   static const int triesMax = 20;
 
-  GameState({
+  const GameState({
     required this.answer,
     required this.playerGuess,
     required this.triesCount,
@@ -40,4 +40,14 @@ class GameState {
       aiGuessMin: aiGuessMin ?? this.aiGuessMin,
     );
   }
+
+  static const GameState empty = GameState(
+    answer: 0,
+    playerGuess: 0,
+    triesCount: 0,
+    aiGuess: 0,
+    guessCount: 0,
+    aiGuessMax: 0,
+    aiGuessMin: 0,
+  );
 }

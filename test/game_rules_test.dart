@@ -1,10 +1,27 @@
+import 'dart:math';
+
+import 'package:guess_a_number/game_manager.dart';
+import 'package:guess_a_number/game_state.dart';
 import 'package:test/test.dart';
 
 main() {
   // Verify that specific game rules are implemented correctly
   group('Game Rules', () {
     group('Rules 1-7', () {
-      test('1. Answer is different when new game starts', () => throw UnimplementedError());
+      setUp(() {});
+      test('1. Answer is different when new game starts', () {
+        int originalAnswer = 123;
+        GameManager manager = GameManager(initialGameState: GameState.empty.copyWith(answer: originalAnswer));
+
+        // Start a new Game
+        manager.newGame();
+        expect(manager.answer != originalAnswer, isTrue);
+
+        // Start another new Game (to ensure the answer consistently different, not just once different)
+        originalAnswer = manager.answer;
+        manager.newGame();
+        expect(manager.answer != originalAnswer, isTrue);
+      });
       test('2. Answer is within limits when generated', () => throw UnimplementedError());
       test('3. Evaluated Guesses are always within limits', () => throw UnimplementedError());
       test('4. Game is over and player wins if they guess the answer', () => throw UnimplementedError());

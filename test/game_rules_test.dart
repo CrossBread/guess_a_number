@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:guess_a_number/game_manager.dart';
 import 'package:guess_a_number/game_state.dart';
 import 'package:test/test.dart';
@@ -22,7 +20,14 @@ main() {
         manager.newGame();
         expect(manager.answer != originalAnswer, isTrue);
       });
-      test('2. Answer is within limits when generated', () => throw UnimplementedError());
+      test('2. Answer is within limits when generated', () {
+        GameManager manager = GameManager(initialGameState: GameState.empty);
+        manager.newGame();
+
+        expect(manager.answer, isNonNegative);
+        expect(manager.answer, greaterThanOrEqualTo(GameState.answerMin));
+        expect(manager.answer, lessThanOrEqualTo(GameState.answerMax));
+      });
       test('3. Evaluated Guesses are always within limits', () => throw UnimplementedError());
       test('4. Game is over and player wins if they guess the answer', () => throw UnimplementedError());
       test('5. Game is over and player loses if the try limit is reached', () => throw UnimplementedError());

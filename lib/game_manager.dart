@@ -5,7 +5,7 @@ import 'package:guess_a_number/game_state.dart';
 class GameManager {
   GameState _gameState;
 
-  GameManager({initialGameState}) : _gameState = initialGameState;
+  GameManager({required GameState initialGameState}) : _gameState = initialGameState;
 
   get answer => _gameState.answer;
 

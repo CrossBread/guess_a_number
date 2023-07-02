@@ -8,7 +8,7 @@ class GameState {
     required this.playerGuess,
     required this.triesCount,
     required this.aiGuess,
-    required this.guessCount,
+    required this.aiGuessCount,
     required this.aiGuessMax,
     required this.aiGuessMin,
   });
@@ -17,7 +17,7 @@ class GameState {
   final int playerGuess;
   final int triesCount;
   final int aiGuess;
-  final int guessCount;
+  final int aiGuessCount;
   final int aiGuessMax;
   final int aiGuessMin;
 
@@ -26,7 +26,7 @@ class GameState {
     int? playerGuess,
     int? triesCount,
     int? aiGuess,
-    int? guessCount,
+    int? aiGuessCount,
     int? aiGuessMax,
     int? aiGuessMin,
   }) {
@@ -35,7 +35,7 @@ class GameState {
       playerGuess: playerGuess ?? this.playerGuess,
       triesCount: triesCount ?? this.triesCount,
       aiGuess: aiGuess ?? this.aiGuess,
-      guessCount: guessCount ?? this.guessCount,
+      aiGuessCount: aiGuessCount ?? this.aiGuessCount,
       aiGuessMax: aiGuessMax ?? this.aiGuessMax,
       aiGuessMin: aiGuessMin ?? this.aiGuessMin,
     );
@@ -46,7 +46,7 @@ class GameState {
     playerGuess: 0,
     triesCount: 0,
     aiGuess: 0,
-    guessCount: 0,
+    aiGuessCount: 0,
     aiGuessMax: 0,
     aiGuessMin: 0,
   );

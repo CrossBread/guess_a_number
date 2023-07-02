@@ -9,9 +9,37 @@ class GameManager {
 
   get answer => _gameState.answer;
 
+  get triesCount => _gameState.triesCount;
+
   void newGame() {
     _gameState = GameState.empty.copyWith(
       answer: Random().nextInt(GameState.answerMax) + GameState.answerMin,
+    );
+  }
+
+  void submitPlayerGuess(int i) {
+    if (i < GameState.answerMin || i > GameState.answerMax) {
+      throw RangeError.range(i, GameState.answerMin, GameState.answerMax);
+    }
+    if (_gameState.triesCount >= GameState.triesMax) {
+      throw StateError('Max tries exceeded');
+    }
+    _gameState = _gameState.copyWith(
+      playerGuess: i,
+      triesCount: _gameState.triesCount + 1,
+    );
+  }
+
+  submitAiGuess(int i) {
+    if (i < GameState.answerMin || i > GameState.answerMax) {
+      throw RangeError.range(i, GameState.answerMin, GameState.answerMax);
+    }
+    _gameState = _gameState.copyWith(
+      aiGuess: i,
+      aiGuessCount: _gameState.aiGuessCount + 1,
+      // TODO: Set the following so they help the AI close in on the answer.
+      aiGuessMax: max(_gameState.aiGuessMax, i),
+      aiGuessMin: min(_gameState.aiGuessMin, i),
     );
   }
 }

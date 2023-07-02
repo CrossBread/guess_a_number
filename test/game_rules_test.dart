@@ -28,7 +28,39 @@ main() {
         expect(manager.answer, greaterThanOrEqualTo(GameState.answerMin));
         expect(manager.answer, lessThanOrEqualTo(GameState.answerMax));
       });
-      test('3. Evaluated Guesses are always within limits', () => throw UnimplementedError());
+      test('3. Evaluated Guesses are always within limits', () {
+        GameManager manager = GameManager(initialGameState: GameState.empty);
+        manager.submitPlayerGuess(GameState.answerMin);
+        expect(manager.triesCount, equals(1));
+
+        manager.submitPlayerGuess(GameState.answerMax);
+        expect(manager.triesCount, equals(2));
+
+        expect(() => manager.submitPlayerGuess(GameState.answerMin - 1), throwsRangeError);
+        // Don't count out of bounds guesses
+        expect(manager.triesCount, equals(2));
+
+        expect(() => manager.submitPlayerGuess(GameState.answerMax + 1), throwsRangeError);
+        // Don't count out of bounds guesses
+        expect(manager.triesCount, equals(2));
+
+        // AI Guesses are always within limits and don't consume tries
+        manager.submitAiGuess(GameState.answerMin);
+        expect(manager.triesCount, equals(2));
+        manager.submitAiGuess(GameState.answerMax);
+        expect(manager.triesCount, equals(2));
+
+        expect(() => manager.submitAiGuess(GameState.answerMin - 1), throwsRangeError);
+        // Don't count out of bounds guesses
+        expect(manager.triesCount, equals(2));
+
+        expect(() => manager.submitAiGuess(GameState.answerMax + 1), throwsRangeError);
+        // Don't count out of bounds guesses
+        expect(manager.triesCount, equals(2));
+      });
+
+      // manager.submitAiGuess(1);
+      // manager.submitAiGuess(1000000);
       test('4. Game is over and player wins if they guess the answer', () => throw UnimplementedError());
       test('5. Game is over and player loses if the try limit is reached', () => throw UnimplementedError());
       test('6. Game is over and player loses if the AI guesses the answer', () => throw UnimplementedError());

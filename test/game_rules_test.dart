@@ -30,6 +30,8 @@ main() {
       });
       test('3. Evaluated Guesses are always within limits', () {
         GameManager manager = GameManager(initialGameState: GameState.empty);
+        manager.newGame();
+
         manager.submitPlayerGuess(GameState.answerMin);
         expect(manager.triesCount, equals(1));
 
@@ -66,7 +68,6 @@ main() {
         manager.newGame();
 
         manager.submitPlayerGuess(manager.answer);
-        manager.submitAiGuess(manager.answer);
         expect(manager.triesCount, equals(1));
         expect(manager.isGameOver, isTrue);
         expect(manager.isPlayerWinner, isTrue);
@@ -77,7 +78,6 @@ main() {
 
         for (int i = 0; i < GameState.triesMax; i++) {
           manager.submitPlayerGuess(GameState.answerMin);
-          manager.submitAiGuess(GameState.answerMin);
         }
         expect(manager.triesCount, equals(GameState.triesMax));
         expect(manager.isGameOver, isTrue);
@@ -163,9 +163,36 @@ main() {
     // Defensive programming should anticipate where these may occur and throw errors
     // The UI layer is responsible for handling these errors and recovering gracefully
     group('Error Conditions', () {
-      test('Player Guesses out of bounds throw an error', () => throw UnimplementedError());
-      test('Player Guesses after game over throw an error', () => throw UnimplementedError());
-      test('AI Guesses after game over throw an error', () => throw UnimplementedError());
+      test('Player Guesses out of bounds throw an error', () {
+        GameManager manager = GameManager(initialGameState: GameState.empty);
+        manager.newGame();
+
+        expect(() => manager.submitPlayerGuess(GameState.answerMin - 1), throwsRangeError);
+        expect(() => manager.submitPlayerGuess(GameState.answerMax + 1), throwsRangeError);
+      });
+      test('Player Guesses after out of tries throws an error', () {
+        GameManager manager = GameManager(initialGameState: GameState.empty);
+        manager.newGame();
+
+        for (int i = 0; i < GameState.triesMax; i++) {
+          manager.submitPlayerGuess(GameState.answerMin);
+        }
+        expect(() => manager.submitPlayerGuess(GameState.answerMin), throwsStateError);
+      });
+      test('Player Guesses after game over throws an error', () {
+        GameManager manager = GameManager(initialGameState: GameState.empty);
+        manager.newGame();
+
+        manager.submitPlayerGuess(manager.answer);
+        expect(() => manager.submitPlayerGuess(GameState.answerMin), throwsStateError);
+      });
+      test('AI Guesses after game over throws an error', () {
+        GameManager manager = GameManager(initialGameState: GameState.empty);
+        manager.newGame();
+
+        manager.submitPlayerGuess(manager.answer);
+        expect(() => manager.submitAiGuess(GameState.answerMin), throwsStateError);
+      });
     });
   });
 

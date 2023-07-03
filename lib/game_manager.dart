@@ -47,6 +47,9 @@ class GameManager {
     if (_gameState.triesCount >= GameState.triesMax) {
       throw StateError('Max tries exceeded');
     }
+    if (isGameOver) {
+      throw StateError('Game has already ended');
+    }
     _gameState = _gameState.copyWith(
       playerGuess: i,
       triesCount: _gameState.triesCount + 1,
@@ -56,6 +59,10 @@ class GameManager {
   void submitAiGuess(int guess) {
     if (guess < GameState.answerMin || guess > GameState.answerMax) {
       throw RangeError.range(guess, GameState.answerMin, GameState.answerMax);
+    }
+
+    if (isGameOver) {
+      throw StateError('Game has already ended');
     }
 
     _gameState = _gameState.copyWith(

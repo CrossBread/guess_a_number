@@ -33,6 +33,12 @@ class GameManager {
 
   get aiGuessMin => _gameState.aiGuessMin;
 
+  get aiAnswerSpaceSize => _gameState.aiGuessMax - _gameState.aiGuessMin;
+
+  get gameAnswerSpaceSize => GameState.answerMax - GameState.answerMin;
+
+  get triesRemaining => GameState.triesMax - _gameState.triesCount;
+
   void newGame() {
     var randInt = _rng.nextInt(GameState.answerMax);
     _gameState = GameState.empty.copyWith(
@@ -75,10 +81,9 @@ class GameManager {
 
   int generateAiGuess() {
     // Allow a deviation of up to +/- 10% of the answer space size, bounded by actual answer space
-    var answerSpaceSize = _gameState.aiGuessMax - _gameState.aiGuessMin;
     var modifier = -.1 + 0.2 * _rng.nextDouble(); // (-10%, 10%)
-    var deviation = (answerSpaceSize * modifier).round();
-    var guess = ((answerSpaceSize) / 2 + _gameState.aiGuessMin + deviation)
+    var deviation = (aiAnswerSpaceSize * modifier).round();
+    var guess = ((aiAnswerSpaceSize) / 2 + _gameState.aiGuessMin + deviation)
         .round()
         .clamp(_gameState.aiGuessMin, _gameState.aiGuessMax);
     return guess;

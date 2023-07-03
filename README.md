@@ -21,10 +21,11 @@ The actual implementaion should be as rapid as possible, not involving scalable 
 - [x] Create a new Flutter project
 - [x] Share to public GitHub repository
 - [x] Scaffold
-- [ ] Test Game Rules Class
-- [ ] Game Rules Implementation
-- [ ] Wire up to Scaffold with Text
+- [x] Test Game Rules Class
+- [x] Game Rules Implementation
+- [x] Wire up to Scaffold with Text
 - [ ] Create Answer Space Widget
+- [ ] Show individual digits and lock them in once they are known (A naturally logrithmic LPI)
 - [ ] Refactor Game Rules to use Answer Space Widget
 - [ ] Game Lifecycle State (New Game, Game Over, etc.)
 - [ ] Game Lifecycle Widget

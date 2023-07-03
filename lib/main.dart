@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:guess_a_number/game_manager.dart';
+import 'package:guess_a_number/game_page.dart';
+import 'package:guess_a_number/game_state.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +35,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Guess A Number'),
+      home: GamePage(
+        gameManager: GameManager(
+          initialGameState: GameState.empty,
+        ),
+        answerMin: GameState.answerMin,
+        answerMax: GameState.answerMax,
+      ),
     );
   }
 }

@@ -61,9 +61,7 @@ class _GamePageState extends State<GamePage> {
             child: FilledButton.icon(
               label: const Text('New Game'),
               icon: const Icon(Icons.refresh),
-              onPressed: () {
-                startNewGame();
-              },
+              onPressed: startNewGame,
             ),
           ),
         ],
@@ -86,9 +84,28 @@ class _GamePageState extends State<GamePage> {
                 ),
                 const Spacer(),
                 if (_gm.isGameOver)
-                  Text(
-                    _gm.isPlayerWinner ? 'You Win!!!' : 'AI Wins!',
-                    style: Theme.of(context).textTheme.headlineLarge,
+                  Column(
+                    children: [
+                      Text(
+                        _gm.isPlayerWinner
+                            ? 'You Win!!! ☺️'
+                            : _gm.isOutOfTries
+                                ? 'Ran out of tries. 🫤'
+                                : 'AI Wins. ☹️',
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: FilledButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: const Size(200, 100),
+                          ),
+                          label: Text('Play Again'),
+                          icon: const Icon(Icons.refresh),
+                          onPressed: startNewGame,
+                        ),
+                      )
+                    ],
                   ),
                 const Spacer(),
                 Text('${_gm.triesRemaining} Tries Left', style: Theme.of(context).textTheme.headlineSmall),

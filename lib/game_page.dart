@@ -25,6 +25,8 @@ class _GamePageState extends State<GamePage> {
   String _sliderLabelValue = '';
   int _guessMin = 0;
   int _guessMax = 1;
+  int _currentGuess = 0;
+  GameManager get _gm => widget.gameManager;
 
   @override
   void initState() {
@@ -33,7 +35,7 @@ class _GamePageState extends State<GamePage> {
   }
 
   void startNewGame() {
-    widget.gameManager.newGame();
+    _gm.newGame();
     resetStateValues();
   }
 
@@ -42,13 +44,13 @@ class _GamePageState extends State<GamePage> {
       _guessSliderValue = (widget.answerMax.toDouble() / 2).round();
       _guessMin = widget.answerMin;
       _guessMax = widget.answerMax;
+      _currentGuess = 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    int playerAnswerSpaceSize = _guessMax - _guessMin;
-
+    int playerAnswerSpaceSize = _guessMax - _guessMin + 1;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -79,28 +81,60 @@ class _GamePageState extends State<GamePage> {
                 ),
                 AnswerSpaceWidget(
                   color: Theme.of(context).colorScheme.secondary,
-                  currentAnswerSpaceSize: widget.gameManager.aiAnswerSpaceSize,
-                  initialAnswerSpaceSize: widget.gameManager.gameAnswerSpaceSize,
+                  currentAnswerSpaceSize: _gm.aiAnswerSpaceSize,
+                  initialAnswerSpaceSize: _gm.gameAnswerSpaceSize,
                 ),
                 const Spacer(),
-                if (widget.gameManager.isGameOver)
+                if (_gm.isGameOver)
                   Text(
-                    widget.gameManager.isPlayerWinner ? 'You Win!!!' : 'AI Wins!',
+                    _gm.isPlayerWinner ? 'You Win!!!' : 'AI Wins!',
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
                 const Spacer(),
-                Text('${widget.gameManager.triesRemaining} Tries Left',
-                    style: Theme.of(context).textTheme.headlineSmall),
+                Text('${_gm.triesRemaining} Tries Left', style: Theme.of(context).textTheme.headlineSmall),
                 AnswerSpaceWidget(
                   color: Theme.of(context).colorScheme.primary,
                   currentAnswerSpaceSize: playerAnswerSpaceSize,
-                  initialAnswerSpaceSize: widget.gameManager.gameAnswerSpaceSize,
+                  initialAnswerSpaceSize: _gm.gameAnswerSpaceSize,
+                ),
+                Row(
+                  children: List.generate(
+                    _gm.gameAnswerSpaceSize.toString().length,
+                    (index) => Expanded(
+                      child: Card(
+                        child: SizedBox.square(
+                          dimension: 75,
+                          child: Center(
+                            child: Text(
+                              // TODO: !!! find better way to pad small guesses with leading zeros
+                              _currentGuess.toString().length > index ? _currentGuess.toString()[index] : '0',
+                              style: Theme.of(context).textTheme.headlineMedium,
+                            ),
+                            // TODO: !! Display Lock icon or color change when a digit is known for the rest of the answer space.  IE, every possible answer starts with 8, so show the player some progress.
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      GamePage.formatter.format(_guessMin),
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                    Text(
+                      GamePage.formatter.format(_guessMax),
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                  ],
                 ),
                 // Text(
                 //   GamePage.formatter.format(_playerLastGuess),
                 //   style: Theme.of(context).textTheme.headlineMedium,
                 // ),
-                const Spacer(),
                 Slider(
                   label: _sliderLabelValue,
                   divisions: 100000,
@@ -110,6 +144,7 @@ class _GamePageState extends State<GamePage> {
                     setState(() {
                       _guessSliderValue = value.round();
                       _sliderLabelValue = _guessSliderValue.toString();
+                      _currentGuess = _guessSliderValue;
                     });
                   },
                   min: _guessMin.toDouble(),
@@ -126,26 +161,27 @@ class _GamePageState extends State<GamePage> {
   void onGuessMade(double value) {
     setState(() {
       _guessSliderValue = value.round();
+      _currentGuess = _guessSliderValue;
       _sliderLabelValue = '';
 
       print('onChangeEnd: $_guessSliderValue');
-      widget.gameManager.submitPlayerGuess(_guessSliderValue);
+      _gm.submitPlayerGuess(_guessSliderValue);
 
-      if (widget.gameManager.isPlayerGuessHigh) {
+      if (_gm.isPlayerGuessHigh) {
         _guessMax = _guessSliderValue;
-      } else if (widget.gameManager.isPlayerGuessLow) {
+      } else if (_gm.isPlayerGuessLow) {
         _guessMin = _guessSliderValue;
-      } else if (widget.gameManager.isPlayerWinner) {
+      } else if (_gm.isPlayerWinner) {
         _guessMin = _guessSliderValue;
         _guessMax = _guessSliderValue;
         onPlayerWins(_guessSliderValue);
       }
     });
 
-    if (!widget.gameManager.isGameOver) {
+    if (!_gm.isGameOver) {
       setState(() {
-        int aiGuess = widget.gameManager.generateAiGuess();
-        widget.gameManager.submitAiGuess(aiGuess);
+        int aiGuess = _gm.generateAiGuess();
+        _gm.submitAiGuess(aiGuess);
       });
     }
   }

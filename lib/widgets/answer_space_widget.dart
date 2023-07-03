@@ -21,10 +21,21 @@ class AnswerSpaceWidget extends StatelessWidget {
         Text('${GamePage.formatter.format(currentAnswerSpaceSize)} possible answers'),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: LinearProgressIndicator(
-            color: color,
-            minHeight: 100,
-            value: (1 - currentAnswerSpaceSize / initialAnswerSpaceSize).toDouble(),
+          child: Container(
+            foregroundDecoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                width: 2,
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                color: color,
+                minHeight: 100,
+                value: (1 - currentAnswerSpaceSize / initialAnswerSpaceSize).toDouble(),
+              ),
+            ),
           ),
         ),
       ],

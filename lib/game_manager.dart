@@ -33,9 +33,9 @@ class GameManager {
 
   get aiGuessMin => _gameState.aiGuessMin;
 
-  get aiAnswerSpaceSize => _gameState.aiGuessMax - _gameState.aiGuessMin;
+  get aiAnswerSpaceSize => _gameState.aiGuessMax - _gameState.aiGuessMin + 1;
 
-  get gameAnswerSpaceSize => GameState.answerMax - GameState.answerMin;
+  get gameAnswerSpaceSize => GameState.answerMax - GameState.answerMin + 1;
 
   get triesRemaining => GameState.triesMax - _gameState.triesCount;
 

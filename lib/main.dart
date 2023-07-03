@@ -7,10 +7,25 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  GameManager? gm;
+
+  @override
+  void initState() {
+    super.initState();
+
+    gm = GameManager(
+      initialGameState: GameState.empty,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -36,9 +51,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: GamePage(
-        gameManager: GameManager(
-          initialGameState: GameState.empty,
-        ),
+        gameManager: gm!,
         answerMin: GameState.answerMin,
         answerMax: GameState.answerMax,
       ),

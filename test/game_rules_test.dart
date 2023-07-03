@@ -163,33 +163,26 @@ main() {
     // Defensive programming should anticipate where these may occur and throw errors
     // The UI layer is responsible for handling these errors and recovering gracefully
     group('Error Conditions', () {
-      test('Player Guesses out of bounds throw an error', () {
-        GameManager manager = GameManager(initialGameState: GameState.empty);
+      var manager = GameManager(initialGameState: GameState.empty);
+      setUp(() {
+        manager = GameManager(initialGameState: GameState.empty, randomSeed: 123);
         manager.newGame();
-
+      });
+      test('Player Guesses out of bounds throw an error', () {
         expect(() => manager.submitPlayerGuess(GameState.answerMin - 1), throwsRangeError);
         expect(() => manager.submitPlayerGuess(GameState.answerMax + 1), throwsRangeError);
       });
       test('Player Guesses after out of tries throws an error', () {
-        GameManager manager = GameManager(initialGameState: GameState.empty);
-        manager.newGame();
-
         for (int i = 0; i < GameState.triesMax; i++) {
           manager.submitPlayerGuess(GameState.answerMin);
         }
         expect(() => manager.submitPlayerGuess(GameState.answerMin), throwsStateError);
       });
       test('Player Guesses after game over throws an error', () {
-        GameManager manager = GameManager(initialGameState: GameState.empty);
-        manager.newGame();
-
         manager.submitPlayerGuess(manager.answer);
         expect(() => manager.submitPlayerGuess(GameState.answerMin), throwsStateError);
       });
       test('AI Guesses after game over throws an error', () {
-        GameManager manager = GameManager(initialGameState: GameState.empty);
-        manager.newGame();
-
         manager.submitPlayerGuess(manager.answer);
         expect(() => manager.submitAiGuess(GameState.answerMin), throwsStateError);
       });
@@ -199,16 +192,80 @@ main() {
   // Walk through different possible states and edge cases to ensure the game isn't brittle
   // Also helps ensure different logic branches are covered
   group('Game State', () {
-    test('Guess is correct', () => throw UnimplementedError());
-    test('Guess is above answer', () => throw UnimplementedError());
-    test('Guess is below answer', () => throw UnimplementedError());
-    test('Guess is negative', () => throw UnimplementedError());
-    test('Guess is out of bounds', () => throw UnimplementedError());
-    test('Guess limit is reached', () => throw UnimplementedError());
-    test('AI Guess is correct', () => throw UnimplementedError());
-    test('AI Guess is above answer', () => throw UnimplementedError());
-    test('AI Guess is below answer', () => throw UnimplementedError());
-    test('New game state', () => throw UnimplementedError());
-    test('Play again state is reset', () => throw UnimplementedError());
+    var manager = GameManager(initialGameState: GameState.empty);
+    setUp(() {
+      manager = GameManager(initialGameState: GameState.empty, randomSeed: 123);
+      manager.newGame();
+    });
+    test('Guess is correct', () {
+      manager.submitPlayerGuess(manager.answer);
+      expect(manager.isPlayerWinner, isTrue);
+      expect(manager.isGameOver, isTrue);
+      expect(manager.isPlayerGuessHigh, isFalse);
+      expect(manager.isPlayerGuessLow, isFalse);
+    });
+    test('Guess is above answer', () {
+      manager.submitPlayerGuess(manager.answer + 1);
+      expect(manager.isPlayerWinner, isFalse);
+      expect(manager.isGameOver, isFalse);
+      expect(manager.isPlayerGuessHigh, isTrue);
+    });
+    test('Guess is below answer', () {
+      manager.submitPlayerGuess(manager.answer - 1);
+      expect(manager.isPlayerWinner, isFalse);
+      expect(manager.isGameOver, isFalse);
+      expect(manager.isPlayerGuessLow, isTrue);
+    });
+    test('Guess is negative', () {
+      expect(() => manager.submitPlayerGuess(-1), throwsRangeError);
+    });
+    test('Guess is out of bounds', () {
+      expect(() => manager.submitPlayerGuess(GameState.answerMin - 1), throwsRangeError);
+      expect(() => manager.submitPlayerGuess(GameState.answerMax + 1), throwsRangeError);
+    });
+    test('Guess limit is reached', () {
+      for (int i = 0; i < GameState.triesMax; i++) {
+        manager.submitPlayerGuess(GameState.answerMin);
+      }
+      expect(manager.isPlayerWinner, isFalse);
+      expect(manager.isGameOver, isTrue);
+    });
+    test('AI Guess is correct', () {
+      manager.submitAiGuess(manager.answer);
+      expect(manager.isAiWinner, isTrue);
+      expect(manager.isGameOver, isTrue);
+    });
+    test('AI Guess is above answer', () {
+      manager.submitAiGuess(manager.answer + 1);
+      expect(manager.isAiWinner, isFalse);
+      expect(manager.isGameOver, isFalse);
+    });
+    test('AI Guess is below answer', () {
+      manager.submitAiGuess(manager.answer - 1);
+      expect(manager.isAiWinner, isFalse);
+      expect(manager.isGameOver, isFalse);
+    });
+    test('New game state', () {
+      expect(manager.isPlayerWinner, isFalse);
+      expect(manager.isAiWinner, isFalse);
+      expect(manager.isGameOver, isFalse);
+      expect(manager.isPlayerGuessHigh, isFalse);
+      expect(manager.isPlayerGuessLow, isTrue);
+      expect(manager.isOutOfTries, isFalse);
+      expect(manager.triesCount, equals(0));
+    });
+    test('Play again state is reset', () {
+      manager.submitPlayerGuess(manager.answer + 1);
+      manager.submitAiGuess(manager.answer - 1);
+      manager.submitPlayerGuess(manager.answer);
+      expect(manager.isPlayerWinner, isTrue);
+      manager.newGame();
+      expect(manager.isAiWinner, isFalse);
+      expect(manager.isGameOver, isFalse);
+      expect(manager.isPlayerGuessHigh, isFalse);
+      expect(manager.isPlayerGuessLow, isTrue);
+      expect(manager.isOutOfTries, isFalse);
+      expect(manager.triesCount, equals(0));
+    });
   });
 }
